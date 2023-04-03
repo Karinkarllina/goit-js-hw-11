@@ -2,24 +2,23 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { Notify } from 'notiflix';
-import { fetchImages } from './fetchImages';
+import { fetchImages, START_PAGE, page, perPage } from './fetchImages';
 
 const searchFormEl = document.querySelector('#search-form');
 const inputSearch = document.querySelector('.input-search');
 const galleryEl = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.load-more');
 
-const BASE_URL = 'https://pixabay.com/api/';
-const API_KEY = '34894296-d45261c0c480dae38daba0bf7';
 
 const lightbox = new SimpleLightbox('.gallery a', { captionDelay: 250 });
 
-let pageStart = 1;
-
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
+btnLoadMore.addEventListener('click', nextPageImagesAdd);
 
-function onSearchFormSubmit (event) {
+
+
+function onSearchFormSubmit(event) {
         event.preventDefault();
 
         const searchValue = event.currentTarget.elements.searchQuery.value;
@@ -29,9 +28,40 @@ function onSearchFormSubmit (event) {
                 btnLoadMore.classList.add('is-hidden');
                 return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
         }
-        
-        fetchImages(searchValue)
-        
+
+        async function getImages() {
+                try {
+                        const searchImages = await fetchImages(searchValue);
+                        createImagesMarkup(searchImages)
+                        btnLoadMore.classList.remove('is-hidden');
+                        // кол-во результатов
+                        
+                } catch {
+                        galleryEl.innerHTML = '';
+                        btnLoadMore.classList.add('is-hidden');
+                        return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+                }
+              
+        }
+        getImages();
+ 
+}
+
+function nextPageImagesAdd(event) { 
+        const searchValue = inputSearch.value;
+
+                try {
+                        const searchImagesNextPage = fetchImages(searchValue);
+                        console.log(searchImagesNextPage)
+                        // createImagesMarkup(searchImages);
+                
+                } catch {
+                        galleryEl.innerHTML = '';
+                        btnLoadMore.classList.add('is-hidden');
+                        return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+        }
+
+nextPageImagesAdd()
 }
 
 
@@ -46,32 +76,35 @@ function onSearchFormSubmit (event) {
 
 
 
+function createImagesMarkup(searchImages) {
+    const imagesMarkup = searchImages.data.hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
+            return ` <a href='${largeImageURL}' class="image-large-link">
+                <div class="photo-card">
+                <img src="${webformatURL}" alt="${tags}" loading="lazy" width=200/>
+                <div class="info">
+                        <p class="info-item">
+                        <b>Likes</b>
+                        ${likes}
+                        </p>
+                        <p class="info-item">
+                        <b>Views</b>
+                        ${views}
+                        </p>
+                        <p class="info-item">
+                        <b>Comments</b>
+                        ${comments}
+                        </p>
+                        <p class="info-item">
+                        <b>Downloads</b>
+                        ${downloads}
+                        </p>
+                        </div>
+                        </div> `;
+    }).join('');
+        galleryEl.innerHTML = imagesMarkup;
+        return imagesMarkup;
+}
 
-// async function fetchImages(searchValue) {
-//         const searchParams = new URLSearchParams({
-//                 key: API_KEY,
-//                 q: searchValue,
-//                 image_type: 'photo',
-//                 orientation: 'horizontal',
-//                 safesearch: 'true',
-//                 per_page: 40,
-//                 page: 1,
-                
-//         });
-
-//         try {
-//                 return await axios.get(`${BASE_URL}?${searchParams}`)
-//         } catch (error) {
-//                 throw new Error(error.message);
-//         };
-
-// }
-// console.log(fetchImages());
 
 
-
-
-
-
- // const imagesSearch = await axios.get(`${BASE_URL}?${searchParams}`);
-        // return imagesSearch.data;
+ 
