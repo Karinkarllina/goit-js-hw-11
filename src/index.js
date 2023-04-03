@@ -47,21 +47,23 @@ function onSearchFormSubmit(event) {
  
 }
 
-function nextPageImagesAdd(event) { 
-        const searchValue = inputSearch.value;
+async function nextPageImagesAdd() { 
+        
+         const searchValueInput = inputSearch.value;
 
-                try {
-                        const searchImagesNextPage = fetchImages(searchValue);
-                        console.log(searchImagesNextPage)
-                        // createImagesMarkup(searchImages);
+        try {
+                const searchImagesNextPage = await fetchImages(searchValueInput);
+                createImagesMarkup(searchImagesNextPage);
+
+
                 
-                } catch {
-                        galleryEl.innerHTML = '';
-                        btnLoadMore.classList.add('is-hidden');
-                        return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+        } catch {
+                galleryEl.innerHTML = '';
+                btnLoadMore.classList.add('is-hidden');
+                return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
         }
 
-nextPageImagesAdd()
+
 }
 
 
