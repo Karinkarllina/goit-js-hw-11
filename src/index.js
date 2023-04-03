@@ -2,7 +2,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { Notify } from 'notiflix';
-import { fetchImages, START_PAGE, page, perPage } from './fetchImages';
+import { fetchImages } from './fetchImages';
 
 const searchFormEl = document.querySelector('#search-form');
 const inputSearch = document.querySelector('.input-search');
