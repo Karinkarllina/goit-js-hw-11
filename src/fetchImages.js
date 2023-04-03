@@ -18,12 +18,9 @@ export function fetchImages(searchValue) {
         perPage: 40,
         page
         });
-//     console.log(page)
         try {
-                console.log(page)
-                page += 1;
-                console.log(page)
-            return axios.get(`${BASE_URL}?${searchParams}`);
+        page += 1;
+        return axios.get(`${BASE_URL}?${searchParams}`);
             
     } catch (error) {
             throw new Error(error.message);
