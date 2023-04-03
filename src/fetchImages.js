@@ -19,7 +19,7 @@ export function fetchImages(searchValue) {
         page
         });
         try {
-        // page += 1;
+        page += 1;
         return axios.get(`${BASE_URL}?${searchParams}`);
             
     } catch (error) {

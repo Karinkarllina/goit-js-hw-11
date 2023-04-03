@@ -54,7 +54,6 @@ async function nextPageImagesAdd() {
         try {
                 
                 const searchImagesNextPage = await fetchImages(searchValueInput);
-                page += 1;
                 createImagesMarkup(searchImagesNextPage);
 
 
