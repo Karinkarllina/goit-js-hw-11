@@ -2,7 +2,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { Notify } from 'notiflix';
-import { fetchImages } from './fetchImages';
+import { fetchImages, page } from './fetchImages';
 
 const searchFormEl = document.querySelector('#search-form');
 const inputSearch = document.querySelector('.input-search');
@@ -52,7 +52,9 @@ async function nextPageImagesAdd() {
          const searchValueInput = inputSearch.value;
 
         try {
+                
                 const searchImagesNextPage = await fetchImages(searchValueInput);
+                page += 1;
                 createImagesMarkup(searchImagesNextPage);
 
 

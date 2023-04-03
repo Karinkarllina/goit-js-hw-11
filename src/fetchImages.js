@@ -15,11 +15,11 @@ export function fetchImages(searchValue) {
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: 'true',
-        perPage: 40,
+        per_page: 40,
         page
         });
         try {
-        page += 1;
+        // page += 1;
         return axios.get(`${BASE_URL}?${searchParams}`);
             
     } catch (error) {
