@@ -23,16 +23,19 @@ export function fetchImages(searchValue) {
         });
         console.log(page)
         try {
-                page += 1;
-                return axios.get(`${BASE_URL}?${searchParams}`);
-                
+                return axios.get(`${BASE_URL}?${searchParams}`);      
             
-    } catch (error) {
+        } catch (error) {
             throw new Error(error.message);
-    };
+        };
 }
 
 
 export function resetPage() {
     page = pageStart;
 };     
+
+
+export function loadPage() {
+        page += 1;
+}

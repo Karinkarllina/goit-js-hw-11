@@ -2,7 +2,7 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
 import { Notify } from 'notiflix';
-import { fetchImages, page, pageStart, perPage, resetPage } from './fetchImages';
+import { fetchImages, page, pageStart, perPage, resetPage, loadPage } from './fetchImages';
 
 const searchFormEl = document.querySelector('#search-form');
 const inputSearch = document.querySelector('.input-search');
@@ -20,6 +20,7 @@ function onSearchFormSubmit(event) {
         event.preventDefault();
 
         const searchValue = event.currentTarget.elements.searchQuery.value;
+        
 
         if (searchValue === '') {
                 galleryEl.innerHTML = '';
@@ -31,6 +32,7 @@ function onSearchFormSubmit(event) {
                         try {
                                 resetPage();
                                 const searchImages = await fetchImages(searchValue);
+                                console.log(searchImages);
                         
                                 if (searchImages.data.hits.length === 0) {
                                         galleryEl.innerHTML = '';
@@ -38,6 +40,7 @@ function onSearchFormSubmit(event) {
                                         return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
                                 
                                 } else {
+                                        loadPage();
                                         galleryEl.innerHTML = createImagesMarkup(searchImages);
                                         lightbox = new SimpleLightbox('.gallery a', {captionDelay: 250}).refresh();
                                         btnLoadMore.classList.remove('is-hidden');
@@ -57,7 +60,6 @@ function onSearchFormSubmit(event) {
 
 
 async function nextPageImagesAdd() {
-        
         const searchValueInput = inputSearch.value;
 
         try {
@@ -69,6 +71,7 @@ async function nextPageImagesAdd() {
                         btnLoadMore.classList.add('is-hidden');
                         return Notify.failure("We're sorry, but you've reached the end of search results.");
                 } else {
+                        loadPage();
                         galleryEl.insertAdjacentHTML('beforeend', createImagesMarkup(searchImagesNextPage));
                         lightbox = new SimpleLightbox('.gallery a', {captionDelay: 250}).refresh();        
                 }
@@ -81,15 +84,13 @@ async function nextPageImagesAdd() {
                 return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
         }
 
-
 }
-
 
 function createImagesMarkup(searchImages) {
     const imagesMarkup = searchImages.data.hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
             return ` <div class="photo-card">
                 <a href='${largeImageURL}' class="image-large-link">
-                <img src="${webformatURL}" alt="${tags}" loading="lazy" width=200/>
+                <img src="${webformatURL}" alt="${tags}" loading="lazy" width="350" height="233"/>
                 <div class="info">
                         <p class="info-item">
                         <b>Likes</b>
@@ -107,9 +108,9 @@ function createImagesMarkup(searchImages) {
                         <b>Downloads</b>
                         ${downloads}
                         </p>
-                        </div>
-                        </a>
-                        </div> `;
+                </div>
+                </a>
+                </div>`;
     }).join('');
         return imagesMarkup;
 }
