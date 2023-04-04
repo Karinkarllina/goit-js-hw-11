@@ -2,7 +2,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { Notify } from 'notiflix';
-import { fetchImages, page } from './fetchImages';
+import { fetchImages, page, pageStart, perPage, resetPage } from './fetchImages';
 
 const searchFormEl = document.querySelector('#search-form');
 const inputSearch = document.querySelector('.input-search');
@@ -27,35 +27,57 @@ function onSearchFormSubmit(event) {
                 galleryEl.innerHTML = '';
                 btnLoadMore.classList.add('is-hidden');
                 return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-        }
+        } else {
 
-        async function getImages() {
-                try {
-                        const searchImages = await fetchImages(searchValue);
-                        createImagesMarkup(searchImages)
-                        btnLoadMore.classList.remove('is-hidden');
-                        // кол-во результатов
+                async function getImages() {
+                        try {
+                                resetPage();
+                                const searchImages = await fetchImages(searchValue);
                         
-                } catch {
-                        galleryEl.innerHTML = '';
-                        btnLoadMore.classList.add('is-hidden');
-                        return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-                }
+                                if (searchImages.data.hits.length === 0) {
+                                        galleryEl.innerHTML = '';
+                                        btnLoadMore.classList.add('is-hidden');
+                                
+                                        return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+                                
+                                } else {
+                                        createImagesMarkup(searchImages)
+                                        btnLoadMore.classList.remove('is-hidden');
+                                }
+                        
+                        } catch {
+                                galleryEl.innerHTML = '';
+                                btnLoadMore.classList.add('is-hidden');
+                                return Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+                        }
               
+                }
+                getImages();
         }
-        getImages();
  
 }
 
-async function nextPageImagesAdd() { 
+
+async function nextPageImagesAdd() {
         
-         const searchValueInput = inputSearch.value;
+        const searchValueInput = inputSearch.value;
 
         try {
-                
                 const searchImagesNextPage = await fetchImages(searchValueInput);
-                createImagesMarkup(searchImagesNextPage);
+                const totalHitsPage = searchImagesNextPage.data.totalHits;
+                const totalPage = (page - 1) * perPage;
+                console.log(totalHitsPage);
+                console.log(page)
+                console.log(perPage)
+                console.log(totalPage);
 
+                if (totalPage >= totalHitsPage) {
+                        btnLoadMore.classList.add('is-hidden');
+                        return Notify.failure("We're sorry, but you've reached the end of search results.");
+                } else {
+                createImagesMarkup(searchImagesNextPage);        
+                }
+                
 
                 
         } catch {
@@ -66,17 +88,6 @@ async function nextPageImagesAdd() {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 function createImagesMarkup(searchImages) {
@@ -107,7 +118,5 @@ function createImagesMarkup(searchImages) {
         galleryEl.innerHTML = imagesMarkup;
         return imagesMarkup;
 }
-
-
 
  
