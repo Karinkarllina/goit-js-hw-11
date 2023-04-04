@@ -65,7 +65,7 @@ async function nextPageImagesAdd() {
         try {
                 const searchImagesNextPage = await fetchImages(searchValueInput);
                 const totalHitsPage = searchImagesNextPage.data.totalHits;
-                const totalPage = (page - 1) * perPage;
+                const totalPage = page * perPage;
                 console.log(totalHitsPage);
                 console.log(page)
                 console.log(perPage)
