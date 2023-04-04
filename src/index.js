@@ -9,11 +9,12 @@ const inputSearch = document.querySelector('.input-search');
 const galleryEl = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.load-more');
 
+
 let lightbox;
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
 btnLoadMore.addEventListener('click', nextPageImagesAdd);
-
+window.addEventListener('scroll', scrollPage);
 
 
 function onSearchFormSubmit(event) {
@@ -33,6 +34,7 @@ function onSearchFormSubmit(event) {
                                 resetPage();
                                 const searchImages = await fetchImages(searchValue);
                                 console.log(searchImages);
+                                const totalHitsNotify = searchImages.data.totalHits;
                         
                                 if (searchImages.data.hits.length === 0) {
                                         galleryEl.innerHTML = '';
@@ -41,9 +43,11 @@ function onSearchFormSubmit(event) {
                                 
                                 } else {
                                         loadPage();
+                                        
                                         galleryEl.innerHTML = createImagesMarkup(searchImages);
                                         lightbox = new SimpleLightbox('.gallery a', {captionDelay: 250}).refresh();
                                         btnLoadMore.classList.remove('is-hidden');
+                                        Notify.success(`Hooray! We found ${totalHitsNotify} images.`)
                                 }
                         
                         } catch {
@@ -113,4 +117,16 @@ function createImagesMarkup(searchImages) {
                 </div>`;
     }).join('');
         return imagesMarkup;
+}
+
+
+function scrollPage(event) {
+const { height: cardHeight } = document
+  .querySelector(".gallery")
+  .firstElementChild.getBoundingClientRect();
+
+window.scrollBy({
+  top: cardHeight * 2,
+  behavior: "smooth",
+});
 }

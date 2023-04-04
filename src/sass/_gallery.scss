@@ -7,23 +7,27 @@ img {
 }
 
 .load-more {
-    display: inline-block;
+    display: flex;
     justify-content: center;
     align-items: center;
     padding: 5px 15px;
-    margin: 20px 450px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     background-color: #2196f3;
     box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
     font: inherit;
     color: white; 
     cursor: pointer;
     border: none;
+    width: 200px;
+    height: 40px;
 }
 
 .gallery-container {
     display: flex;
     justify-content: center;
     flex-direction: column;
+    align-items: center;
     
 }
 
